@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "iei-bot"
+version = "0.1.0"
+description = ""
+authors = ["jianeng <git@jianeng.dev>"]
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.10"
+selenium = "^4.26.1"
+fastapi = "^0.110.0"
+uvicorn = "^0.27.1"
+pydantic = "^2.6.3"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
