@@ -1,0 +1,18 @@
+services:
+  iei-bot:
+    build:
+      context: ./iei-bot
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./iei-bot:/app
+      - ./iei-bot/chromedriver-linux64:/chromedriver-linux64
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
