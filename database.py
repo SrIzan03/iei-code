@@ -12,6 +12,10 @@ def create_database():
             sql_script = file.read()
         conn.executescript(sql_script)
 
+def get_connection_cursor():
+    conn = get_connection()
+    return (conn, conn.cursor())
+
 # CRUD operations
 # def create_user(name: str, email: str):
 #     conn = get_connection()
