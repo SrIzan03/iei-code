@@ -19,7 +19,10 @@ def get_direccion_and_cod_postal(lat: str, lon: str):
     return dir, cod
 
 def get_post_cod(address_json):
-    return address_json['postcode']
+    post_code = address_json.get('postcode')
+    if post_code:
+        return post_code
+    return ''
 
 def get_dir(address_json):
     direccion_keys = ['road', 'amenity']
