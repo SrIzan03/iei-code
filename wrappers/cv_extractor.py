@@ -8,7 +8,7 @@ def wrap() -> str:
 
 def getTipo(denominacion: str, codCategoria: int):
     if codCategoria in [5, 7]:
-        return Tipo.YACIMIENTO_ARQUELOGICO
+        return Tipo.YACIMIENTO_ARQUEOLOGICO
     if denominacion in ["Iglesia", "Ermita"]:
         return Tipo.IGLESIA_ERMITA
     if denominacion in ["Monasterio", "Convento"]:
