@@ -2,6 +2,9 @@ import requests
 from string import Template
 
 def get_direccion_and_cod_postal(lat: str, lon: str):
+    if not lat or not lon:
+        return '', ''
+
     t = Template('https://nominatim.openstreetmap.org/reverse?format=json&lat=$lat&lon=$lon')
     
     headers = {"User-Agent": "IEI_04/1.0"}

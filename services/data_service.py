@@ -25,23 +25,32 @@ def create_localidad_model(localidad: LocalidadCreate, provincia: Provincia):
         create_localidad(l)
         return l
 
+skip_count = 0
+
 def create_monumento_model(monumento: MonumentoCreate, localidad: Localidad):
+    global skip_count
     existing_monumento = get_monumento_by_nombre(monumento.nombre)
     if existing_monumento:
+        skip_count += 1
+        print(f"Monumento {monumento.nombre} already exists. Skipped {skip_count} times.")
         return existing_monumento
     else:
         codigo_postal = monumento.codigo_postal
         direccion = monumento.direccion
-        if codigo_postal == '' or direccion == '':
+        if codigo_postal == '' and direccion == '':
             direccion, codigo_postal = get_direccion_and_cod_postal(monumento.latitud, monumento.longitud)
+        elif direccion == '':
+            direccion, _ = get_direccion_and_cod_postal(monumento.latitud, monumento.longitud)
+        elif codigo_postal == '': 
+            _, codigo_postal = get_direccion_and_cod_postal(monumento.latitud, monumento.longitud)
 
         if codigo_postal != '':
-            codigo_postal = f"{int(monumento.codigo_postal):05}"
+            codigo_postal = f"{int(codigo_postal):05}"
 
         m = Monumento(
             monumento.nombre,
             monumento.tipo,
-            monumento.direccion,
+            direccion,
             codigo_postal,
             monumento.longitud,
             monumento.latitud,

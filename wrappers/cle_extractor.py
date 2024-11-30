@@ -48,7 +48,7 @@ def replace_html_entities(text):
     return text
 
 # Wrapper: Read XML and convert to JSON
-tree = ET.parse("wrappers/data_sources/monumentos.xml")
+tree = ET.parse("wrappers/data_sources/monumentos_entrega1.xml")
 root = tree.getroot()
 
 data = []
@@ -67,9 +67,9 @@ json = df.to_json(orient="records", indent=4)
 # Extractor: Read JSON
 df_json = pd.read_json(json)
 
-monumento_nombres = df_json['nombre'].dropna()
+monumento_nombres = df_json['nombre']
 monumento_tipos = df_json['tipoMonumento'].apply(lambda x: tipo_mapping.get(x, Tipo.OTROS))
-monumento_direcciones = df_json['calle']
+monumento_direcciones = df_json['calle'].fillna('')
 monumento_codigos_postales = df_json['codigoPostal'].fillna('')
 monumento_descripciones = df_json['Descripcion'].apply(replace_html_entities)
 
@@ -88,6 +88,7 @@ monumento_descripciones = monumento_descripciones.apply(clean_html_tags)
 
 def pass_data_to_service():
     from models import MonumentoCreate, LocalidadCreate, ProvinciaCreate
+    # print(len(monumento_nombres))
     for i in range(len(monumento_nombres)):
         monumento = MonumentoCreate(
             monumento_nombres[i],
