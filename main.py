@@ -1,7 +1,6 @@
 import database
-from wrappers import get_tipo, print_example 
+from wrappers import pass_data_to_service  
 
-print_example()
-print(get_tipo())
-
-# database.create_database()
+database.clean_database()
+database.create_database()
+pass_data_to_service()

@@ -1,4 +1,5 @@
 # database.py
+import os
 import sqlite3
 
 def get_connection():
@@ -15,6 +16,9 @@ def create_database():
 def get_connection_cursor():
     conn = get_connection()
     return (conn, conn.cursor())
+
+def clean_database():
+   os.remove("my_database.db") 
 
 # CRUD operations
 # def create_user(name: str, email: str):

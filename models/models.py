@@ -2,19 +2,20 @@ from dataclasses import dataclass
 from enum import Enum
 
 class Tipo(str, Enum):
-    YACIMIENTO_ARQUEOLOGICO = 'yacimiento_arqueologico' # type: ignore
-    IGLESIA_ERMITA = 'iglesia_ermita' # type: ignore
-    MONASTERIO_CONVENTO = 'monasterio_convento'
-    CASTILLO_FORTALEZA_TORRE = 'castillo_fortaleza_torre'
-    EDIFICIO_SINGULAR = 'edificio_singular'
-    PUENTE = 'puente'
-    OTROS = 'otros'
+    YACIMIENTO_ARQUEOLOGICO = 'Yacimiento arqueologico' # type: ignore
+    IGLESIA_ERMITA = 'Iglesia_Ermita' # type: ignore
+    MONASTERIO_CONVENTO = 'Monasterio_Convento'
+    CASTILLO_FORTALEZA_TORRE = 'Castillo-Fortaleza-Torre'
+    EDIFICIO_SINGULAR = 'Edificio singular'
+    PUENTE = 'Puente'
+    OTROS = 'Otros'
 
 @dataclass
 class Provincia:
     codigo: int
     nombre: str
 
+@dataclass
 class ProvinciaCreate:
     nombre: str
 
@@ -24,6 +25,7 @@ class Localidad:
     nombre: str
     provincia_cod: int
 
+@dataclass
 class LocalidadCreate:
     nombre: str
 
@@ -38,6 +40,7 @@ class Monumento:
     descripcion: str
     localidad_cod: int 
 
+@dataclass
 class MonumentoCreate:
     nombre: str
     tipo: Tipo

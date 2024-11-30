@@ -1,17 +1,9 @@
 from database import get_connection_cursor
+from models import Monumento
 
-def create_monumento(
-    nombre: str, 
-    tipo: str, 
-    direccion: str, 
-    codigo_postal: str, 
-    longitud: float, 
-    latitud: float, 
-    descripcion: str, 
-    localidad_codigo: int
-) -> None:
+def create_monumento(m: Monumento) -> None:
     conn, cur = get_connection_cursor()
-    with cur:
+    try:
         cur.execute(
             """
             INSERT INTO Monumento (
@@ -26,20 +18,22 @@ def create_monumento(
             ) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             """,
-            (nombre, tipo, direccion, codigo_postal, longitud, latitud, descripcion, localidad_codigo),
+            (m.nombre, m.tipo, m.direccion, m.codigo_postal, m.longitud, m.latitud, m.descripcion, m.localidad_cod),
         )
-    with conn:
+    finally:
         conn.commit()
     
 def get_monumento_by_nombre(nombre: str):
     _, cur = get_connection_cursor()
-    with cur:
+    try:
         cur.execute(
             """
             SELECT *
             FROM Monumento AS m
             WHERE m.nombre = ?
             """,
-            nombre
+            (nombre,)
         )
         return cur.fetchone()
+    finally:
+        cur.close()

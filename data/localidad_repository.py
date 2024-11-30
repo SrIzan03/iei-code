@@ -1,21 +1,23 @@
 from database import get_connection_cursor
+from models import Localidad
 
-def create_localidad(codigo: int, nombre: str, codigo_localidad) -> None:
+def create_localidad(l: Localidad) -> None:
     conn, cur = get_connection_cursor()
-    with cur:
+    try:
         cur.execute(
             """
-            INSERT INTO Localidad (codigo, nombre, localidad_codigo)
-            VALUES (?, ?, ?)
+            INSERT INTO Localidad (nombre, provincia_codigo)
+            VALUES (?, ?)
             """,
-            (codigo, nombre, codigo_localidad),
+            (l.nombre, l.provincia_cod,),
         )
-    with conn:
+        l.codigo = cur.lastrowid
+    finally:
         conn.commit()
 
 def get_localidad_by_codigo(codigo: int):
     _, cur = get_connection_cursor()
-    with cur:
+    try:
         cur.execute(
             """
             SELECT *
@@ -24,17 +26,20 @@ def get_localidad_by_codigo(codigo: int):
             """,
             codigo
         )
+    finally:
         return cur.fetchone()
     
 def get_localidad_by_nombre(nombre: str):
     _, cur = get_connection_cursor()
-    with cur:
+    try:
         cur.execute(
             """
             SELECT *
             FROM Localidad AS l
             WHERE l.nombre = ?
             """,
-            nombre
+            (nombre,)
         )
         return cur.fetchone()
+    finally:
+        cur.close()

@@ -3,6 +3,7 @@ import xml.etree.ElementTree as ET
 import re
 
 from models import Tipo
+from services import insert_into_db
 
 # Define a mapping that converts the monumento_tipos to the Tipo enum
 tipo_mapping = {
@@ -30,6 +31,22 @@ tipo_mapping = {
     'otros': Tipo.OTROS
 }
 
+char_mapping = {
+    '&oacute;': 'ó',
+    '&aacute;': 'á',
+    '&eacute;': 'é',
+    '&iacute;': 'í',
+    '&uacute;': 'ú',
+    '&ntilde;': 'ñ',
+}
+
+def replace_html_entities(text):
+    if text is None:
+        return ''
+    for entity, char in char_mapping.items():
+        text = text.replace(entity, char)
+    return text
+
 # Wrapper: Read XML and convert to JSON
 tree = ET.parse("wrappers/data_sources/monumentos.xml")
 root = tree.getroot()
@@ -53,46 +70,46 @@ df_json = pd.read_json(json)
 monumento_nombres = df_json['nombre']
 monumento_tipos = df_json['tipoMonumento'].apply(lambda x: tipo_mapping.get(x, Tipo.OTROS))
 monumento_direcciones = df_json['calle']
-monumento_codigos_postales = df_json['codigoPostal']
-monumento_descripciones = df_json['Descripcion']
+monumento_codigos_postales = df_json['codigoPostal'].fillna('').astype(str)
+monumento_descripciones = df_json['Descripcion'].apply(replace_html_entities)
 
 monumento_longitudes = df_json['coordenadas'].apply(lambda x: x['longitud'])
 monumento_latitudes = df_json['coordenadas'].apply(lambda x: x['latitud'])
 localidad_nombres = df_json['poblacion'].apply(lambda x: x['localidad'] if x is not None else '')
 provincia_nombres = df_json['poblacion'].apply(lambda x: x['provincia'] if x is not None else '')
-# poblacion_nombres = df_json['poblacion'].apply(lambda x: x['provincia'])
 
-def clean_description(description):
-    if description is None:
+def clean_html_tags(text):
+    if text is None:
         return ''
     clean = re.compile('<.*?>')
-    return re.sub(clean, '', description)
+    return re.sub(clean, '', text)
 
-monumento_descripciones = monumento_descripciones.apply(clean_description)
+monumento_descripciones = monumento_descripciones.apply(clean_html_tags)
 
 def pass_data_to_service():
     from models import MonumentoCreate, LocalidadCreate, ProvinciaCreate
     for i in range(len(monumento_nombres)):
-        MonumentoCreate(
+        monumento = MonumentoCreate(
             monumento_nombres[i],
             monumento_tipos[i],
             monumento_direcciones[i],
             monumento_codigos_postales[i],
             monumento_longitudes[i],
             monumento_latitudes[i],
-            '',
+            monumento_descripciones[i],
         )
-        LocalidadCreate(
+        localidad = LocalidadCreate(
             localidad_nombres[i],
         )
-        ProvinciaCreate(
+        provincia = ProvinciaCreate(
             provincia_nombres[i],
         )
-
-
+        insert_into_db(monumento, localidad, provincia)
 
 def print_example():
-    print(monumento_descripciones[1406])
+    with open('output.txt', 'w', encoding='utf8') as file:   
+        for i in range(monumento_longitudes.size):
+            file.write(str(monumento_longitudes[i]) + '\n')
 
 def get_tipo():
-    return tipo_mapping.get('Puentes', Tipo.OTROS)
+    print(monumento_codigos_postales[81])
