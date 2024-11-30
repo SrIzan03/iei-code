@@ -35,11 +35,14 @@ def create_monumento_model(monumento: MonumentoCreate, localidad: Localidad):
         if codigo_postal == '' or direccion == '':
             direccion, codigo_postal = get_direccion_and_cod_postal(monumento.latitud, monumento.longitud)
 
+        if codigo_postal != '':
+            codigo_postal = f"{int(monumento.codigo_postal):05}"
+
         m = Monumento(
             monumento.nombre,
             monumento.tipo,
             monumento.direccion,
-            f"{int(monumento.codigo_postal):05}",
+            codigo_postal,
             monumento.longitud,
             monumento.latitud,
             monumento.descripcion,
@@ -47,3 +50,8 @@ def create_monumento_model(monumento: MonumentoCreate, localidad: Localidad):
         )
         create_monumento(m)
         return m
+
+def exists_monumento(mon_nombre: str):
+    existing_monumento = get_monumento_by_nombre(mon_nombre)
+    if existing_monumento:
+        return existing_monumento
