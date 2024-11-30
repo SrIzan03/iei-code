@@ -1,6 +1,7 @@
 import pandas as pd
+from math import isnan
 from models import Tipo, MonumentoCreate, ProvinciaCreate, LocalidadCreate
-from services import get_direccion_and_cod_postal, utm_to_lat_long
+from services import get_direccion_and_cod_postal, utm_to_lat_long, insert_into_db, exists_monumento
 
 def wrap() -> str:
     df = pd.read_csv('./wrappers/data_sources/bienes_inmuebles_interes_cultural.csv', delimiter=";")
@@ -28,8 +29,17 @@ def extract(json: str):
     df = pd.read_json(json)
 
     for _, row in df.iterrows():
-        response = utm_to_lat_long(row['UTMNORTE'],row['UTMESTE'])
         denominacion = row['DENOMINACION']
+        if exists_monumento(denominacion):
+            continue
+
+        utm_norte = row['UTMNORTE']
+        utm_este = row['UTMESTE']
+        if isnan(utm_este) or isnan(utm_norte):
+            continue
+
+        response = utm_to_lat_long(utm_norte, utm_este)
+        
         codCategoria = row['CODCATEGORIA']
 
         tipo = getTipo(denominacion, codCategoria)
@@ -50,3 +60,9 @@ def extract(json: str):
         localidad = LocalidadCreate(row['MUNICIPIO'])
 
         provincia = ProvinciaCreate(row['PROVINCIA'])
+
+        insert_into_db(monumento, localidad, provincia)
+
+def extract_cv():
+    json = wrap()
+    extract(json)
