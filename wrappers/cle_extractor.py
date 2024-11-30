@@ -1,5 +1,6 @@
 import pandas as pd
 import xml.etree.ElementTree as ET
+import re
 
 from models import Tipo
 
@@ -61,6 +62,14 @@ localidad_nombres = df_json['poblacion'].apply(lambda x: x['localidad'] if x is 
 provincia_nombres = df_json['poblacion'].apply(lambda x: x['provincia'] if x is not None else '')
 # poblacion_nombres = df_json['poblacion'].apply(lambda x: x['provincia'])
 
+def clean_description(description):
+    if description is None:
+        return ''
+    clean = re.compile('<.*?>')
+    return re.sub(clean, '', description)
+
+monumento_descripciones = monumento_descripciones.apply(clean_description)
+
 def pass_data_to_service():
     from models import MonumentoCreate, LocalidadCreate, ProvinciaCreate
     for i in range(len(monumento_nombres)):
@@ -80,8 +89,10 @@ def pass_data_to_service():
             provincia_nombres[i],
         )
 
+
+
 def print_example():
-    print(monumento_descripciones)
+    print(monumento_descripciones[1406])
 
 def get_tipo():
     return tipo_mapping.get('Puentes', Tipo.OTROS)
