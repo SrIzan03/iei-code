@@ -14,8 +14,7 @@ CREATE TABLE Localidad (
 
 -- Crear la tabla Monumento
 CREATE TABLE Monumento (
-    codigo INTEGER PRIMARY KEY,
-    nombre TEXT NOT NULL,
+    nombre TEXT PRIMARY KEY,
     tipo TEXT NOT NULL CHECK (tipo IN ('Yacimiento arqueológico', 'Iglesia-Ermita', 
                                        'Monasterio-Convento', 'Castillo-Fortaleza-Torre', 
                                        'Edificio singular', 'Puente', 'Otros')),

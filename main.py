@@ -1,3 +1,7 @@
 import database
+from wrappers import get_tipo, print_example 
 
-database.create_database()
+print_example()
+print(get_tipo())
+
+# database.create_database()
