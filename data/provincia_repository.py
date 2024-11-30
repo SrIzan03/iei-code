@@ -30,7 +30,7 @@ def get_provincia_by_codigo(codigo: int):
     finally:
         cur.close()
 
-def get_provincia_by_nombre(nombre: str):
+def get_provincia_by_nombre(nombre: str) -> Provincia:
     _, cur = get_connection_cursor()
     try:
         cur.execute(
@@ -41,6 +41,9 @@ def get_provincia_by_nombre(nombre: str):
             """,
             (nombre,)
         )
-        return cur.fetchone()
+        row = cur.fetchone()
+        if row:
+            return Provincia(codigo=row[0], nombre=row[1])
+        return None
     finally:
         cur.close()

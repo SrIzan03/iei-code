@@ -29,7 +29,7 @@ def get_localidad_by_codigo(codigo: int):
     finally:
         return cur.fetchone()
     
-def get_localidad_by_nombre(nombre: str):
+def get_localidad_by_nombre(nombre: str) -> Localidad:
     _, cur = get_connection_cursor()
     try:
         cur.execute(
@@ -40,6 +40,9 @@ def get_localidad_by_nombre(nombre: str):
             """,
             (nombre,)
         )
-        return cur.fetchone()
+        row = cur.fetchone()
+        if row:
+            return Localidad(codigo=row[0], nombre=row[1], provincia_cod=row[2])
+        return None
     finally:
         cur.close()

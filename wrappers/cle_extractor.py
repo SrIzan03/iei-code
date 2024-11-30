@@ -67,10 +67,10 @@ json = df.to_json(orient="records", indent=4)
 # Extractor: Read JSON
 df_json = pd.read_json(json)
 
-monumento_nombres = df_json['nombre']
+monumento_nombres = df_json['nombre'].dropna()
 monumento_tipos = df_json['tipoMonumento'].apply(lambda x: tipo_mapping.get(x, Tipo.OTROS))
 monumento_direcciones = df_json['calle']
-monumento_codigos_postales = df_json['codigoPostal'].fillna('').astype(str)
+monumento_codigos_postales = df_json['codigoPostal'].fillna('')
 monumento_descripciones = df_json['Descripcion'].apply(replace_html_entities)
 
 monumento_longitudes = df_json['coordenadas'].apply(lambda x: x['longitud'])

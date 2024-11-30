@@ -3,8 +3,8 @@ from enum import Enum
 
 class Tipo(str, Enum):
     YACIMIENTO_ARQUEOLOGICO = 'Yacimiento arqueologico' # type: ignore
-    IGLESIA_ERMITA = 'Iglesia_Ermita' # type: ignore
-    MONASTERIO_CONVENTO = 'Monasterio_Convento'
+    IGLESIA_ERMITA = 'Iglesia-Ermita' # type: ignore
+    MONASTERIO_CONVENTO = 'Monasterio-Convento'
     CASTILLO_FORTALEZA_TORRE = 'Castillo-Fortaleza-Torre'
     EDIFICIO_SINGULAR = 'Edificio singular'
     PUENTE = 'Puente'
