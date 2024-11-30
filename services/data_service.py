@@ -1,5 +1,6 @@
 from models import MonumentoCreate, LocalidadCreate, ProvinciaCreate, Provincia, Monumento, Localidad
 from data import get_provincia_by_nombre, get_localidad_by_nombre, get_monumento_by_nombre, create_provincia, create_localidad, create_monumento 
+from .geo_api_service import get_direccion_and_cod_postal 
 
 def insert_into_db(monumento: MonumentoCreate, localidad: LocalidadCreate, provincia: ProvinciaCreate):
     provincia_model = create_provincia_model(provincia)
@@ -29,9 +30,11 @@ def create_monumento_model(monumento: MonumentoCreate, localidad: Localidad):
     if existing_monumento:
         return existing_monumento
     else:
-        # TODO: Call to api
-        if monumento.codigo_postal == '':
-            return None
+        codigo_postal = monumento.codigo_postal
+        direccion = monumento.direccion
+        if codigo_postal == '' or direccion == '':
+            direccion, codigo_postal = get_direccion_and_cod_postal(monumento.latitud, monumento.longitud)
+
         m = Monumento(
             monumento.nombre,
             monumento.tipo,
