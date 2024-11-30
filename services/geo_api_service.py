@@ -22,11 +22,11 @@ def get_post_cod(address_json):
     return address_json['postcode']
 
 def get_dir(address_json):
-    localidad_keys = ['road', 'amenity']
+    direccion_keys = ['road', 'amenity']
     
-    for key in localidad_keys:
-        localidad = address_json.get(key)
-        if localidad:
-            return localidad
+    for key in direccion_keys:
+        direccion = address_json.get(key)
+        if direccion:
+            return direccion
         
     return ""
