@@ -1,7 +1,7 @@
 # Ruta al archivo JSON
-$inputFile = "C:\Users\GamerX\Desktop\ProyectoIEI\iei-code\wrappers\data_sources\edificios.json"
+$inputFile = "C:\Users\GamerX\Desktop\ProyectoIEI\iei-code\wrappers\data_sources\edificios_entrega1.json"
 
-$outputFile = "C:\Users\GamerX\Desktop\ProyectoIEI\iei-code\wrappers\data_sources\edificios2.json"
+$outputFile = "C:\Users\GamerX\Desktop\ProyectoIEI\iei-code\wrappers\data_sources\edificios_entrega.json"
 # Leer el contenido del archivo JSON como texto
 $jsonText = Get-Content -Path $inputFile -Raw
 
@@ -15,6 +15,6 @@ Set-Content -Path $outputFile -Value $jsonProcessed
 Write-Host "El archivo JSON procesado se ha guardado en: $outputFile"
 
 # Convertir el JSON de vuelta a texto y guardar el archivo actualizado
-$outputFile = "C:\Users\GamerX\Desktop\ProyectoIEI\iei-code\wrappers\data_sources\edificios2.json"
+$outputFile = "C:\Users\GamerX\Desktop\ProyectoIEI\iei-code\wrappers\data_sources\edificios_entrega.json"
 
 
