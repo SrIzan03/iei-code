@@ -17,11 +17,9 @@ def setup_driver():
     chrome_options.add_argument("--disable-gpu")
     chrome_options.add_argument("--remote-debugging-port=9222")
     chrome_options.add_argument("--window-size=2560,1440")
-    chrome_options.binary_location = "/usr/bin/google-chrome-stable"
     
     try:
-        service = Service('/chromedriver-linux64/chromedriver')
-        driver = webdriver.Chrome(service=service, options=chrome_options)
+        driver = webdriver.Chrome(options=chrome_options)
         return driver
     except Exception as e:
         print(f"Chrome driver initialization error: {str(e)}")

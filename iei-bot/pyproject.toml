@@ -11,6 +11,7 @@ selenium = "^4.26.1"
 fastapi = "^0.110.0"
 uvicorn = "^0.27.1"
 pydantic = "^2.6.3"
+webdriver-manager = "^4.0.2"
 
 [build-system]
 requires = ["poetry-core"]
