@@ -1,6 +1,5 @@
 import pandas as pd
 from models import Tipo
-import json
 import numpy
 from services import insert_into_db
 
@@ -69,7 +68,7 @@ provincia_nombres = df["territory"]
 def pass_data_to_service():
     from models import MonumentoCreate, LocalidadCreate, ProvinciaCreate
     for i in range(len(monumento_nombres)):
-        MonumentoCreate(
+        monumento = MonumentoCreate(
             monumento_nombres[i],
             monumento_tipos[i],
             monumento_direcciones[i],
@@ -78,12 +77,14 @@ def pass_data_to_service():
             monumento_latitudes[i],
             monumento_descripciones[i],
         )
-        LocalidadCreate(
+        localidad = LocalidadCreate(
             localidad_nombres[i],
         )
-        ProvinciaCreate(
+        provincia = ProvinciaCreate(
             provincia_nombres[i],
         )
+        insert_into_db(monumento, localidad, provincia)
+
 
 
 def print_codigo():
