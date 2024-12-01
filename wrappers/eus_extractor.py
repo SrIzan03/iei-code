@@ -2,6 +2,7 @@ import pandas as pd
 from models import Tipo
 import json
 import numpy
+from services import insert_into_db
 
 tipo_mapping = {
     "Zona arqueológica": Tipo.YACIMIENTO_ARQUEOLOGICO,
@@ -47,7 +48,7 @@ def check_direccion(direccion: str):
     
 
 # Wrapper : In the future the wrapper will return all the json data to the extractor instead of the extractor reading it directly.
-DATA_ROUTE = "wrappers/data_sources/edificios2.json"
+DATA_ROUTE = "wrappers/data_sources/edificios_entrega.json"
 
 # Extractor: Read json data from the wrapper and filters the corresponding data to add them to the DB.
 
@@ -55,13 +56,13 @@ df = pd.read_json(DATA_ROUTE)
 
 monumento_nombres = df["documentName"]
 monumento_tipos = df["documentName"].apply(lambda x: determinar_tipo(x, tipo_mapping))
-monumento_direcciones = df["address"].fillna("").astype(str)
-monumento_codigos_postales = df["postalCode"].fillna("").astype(str)
+monumento_direcciones = df["address"].fillna("")
+monumento_codigos_postales = df["postalCode"].fillna("")
 monumento_longitudes = df["lonwgs84"]
 monumento_latitudes = df["latwgs84"]
 monumento_descripciones = df["documentDescription"]
 
-localidad_nombres = df["municipality"].fillna("").astype(str)
+localidad_nombres = df["municipality"].fillna("")
 
 provincia_nombres = df["territory"]
 
