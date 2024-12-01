@@ -1,10 +1,11 @@
+from io import StringIO
 import pandas as pd
 from math import isnan
 from models import Tipo, MonumentoCreate, ProvinciaCreate, LocalidadCreate
 from services import get_direccion_and_cod_postal, utm_to_lat_long, insert_into_db, exists_monumento
 
 def wrap() -> str:
-    df = pd.read_csv('./wrappers/data_sources/bienes_inmuebles_interes_cultural.csv', delimiter=";")
+    df = pd.read_csv('./wrappers/data_sources/bienes_inmuebles_interes_cultural_entrega1.csv', delimiter=";")
     return df.to_json()
 
 def getTipo(denominacion: str, codCategoria: int):
@@ -26,7 +27,7 @@ def getTipo(denominacion: str, codCategoria: int):
 
 # TODO: refactor, in the future we will not pass a str
 def extract(json: str):
-    df = pd.read_json(json)
+    df = pd.read_json(StringIO(json))
 
     for _, row in df.iterrows():
         denominacion = row['DENOMINACION']
@@ -45,13 +46,12 @@ def extract(json: str):
         tipo = getTipo(denominacion, codCategoria)
         latitude = response.get('latitude')
         longitude = response.get('longitude')
-        direccion, postCode = get_direccion_and_cod_postal(latitude, longitude)
 
         monumento = MonumentoCreate(
             denominacion,
             tipo,
-            direccion,
-            postCode,
+            '',
+            '',
             longitude,
             latitude,
             ''

@@ -3,25 +3,27 @@ from data import get_provincia_by_nombre, get_localidad_by_nombre, get_monumento
 from .geo_api_service import get_direccion_and_cod_postal 
 
 def insert_into_db(monumento: MonumentoCreate, localidad: LocalidadCreate, provincia: ProvinciaCreate):
+    if not monumento.latitud or not monumento.longitud:
+        return
     provincia_model = create_provincia_model(provincia)
     localidad_model = create_localidad_model(localidad, provincia_model)
     create_monumento_model(monumento, localidad_model)
 
 def create_provincia_model(provincia: ProvinciaCreate):
-    existing_provincia = get_provincia_by_nombre(provincia.nombre)
+    existing_provincia = get_provincia_by_nombre(provincia.nombre.upper())
     if existing_provincia:
         return existing_provincia
     else:
-        p = Provincia(None, provincia.nombre)
+        p = Provincia(None, provincia.nombre.upper())
         create_provincia(p)
         return p
 
 def create_localidad_model(localidad: LocalidadCreate, provincia: Provincia):
-    existing_localidad = get_localidad_by_nombre(localidad.nombre)
+    existing_localidad = get_localidad_by_nombre(localidad.nombre.upper())
     if existing_localidad:
         return existing_localidad
     else:
-        l = Localidad(None, localidad.nombre, provincia.codigo)
+        l = Localidad(None, localidad.nombre.upper(), provincia.codigo)
         create_localidad(l)
         return l
 
@@ -37,6 +39,7 @@ def create_monumento_model(monumento: MonumentoCreate, localidad: Localidad):
     else:
         codigo_postal = monumento.codigo_postal
         direccion = monumento.direccion
+
         if codigo_postal == '' and direccion == '':
             direccion, codigo_postal = get_direccion_and_cod_postal(monumento.latitud, monumento.longitud)
         elif direccion == '':

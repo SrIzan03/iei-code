@@ -1,6 +1,10 @@
 import database
-from wrappers import pass_data_to_service  
+from wrappers import extract_cv, extract_cle, extract_eus
+from dotenv import load_dotenv
 
+load_dotenv()
 database.clean_database()
 database.create_database()
-pass_data_to_service()
+extract_eus()
+extract_cv()
+extract_cle()

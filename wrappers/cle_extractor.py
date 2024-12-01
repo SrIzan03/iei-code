@@ -1,3 +1,4 @@
+from io import StringIO
 import pandas as pd
 import xml.etree.ElementTree as ET
 import re
@@ -65,7 +66,7 @@ df = pd.DataFrame(data)
 json = df.to_json(orient="records", indent=4)
 
 # Extractor: Read JSON
-df_json = pd.read_json(json)
+df_json = pd.read_json(StringIO(json))
 
 monumento_nombres = df_json['nombre']
 monumento_tipos = df_json['tipoMonumento'].apply(lambda x: tipo_mapping.get(x, Tipo.OTROS))
@@ -86,7 +87,7 @@ def clean_html_tags(text):
 
 monumento_descripciones = monumento_descripciones.apply(clean_html_tags)
 
-def pass_data_to_service():
+def extract_cle():
     from models import MonumentoCreate, LocalidadCreate, ProvinciaCreate
     # print(len(monumento_nombres))
     for i in range(len(monumento_nombres)):

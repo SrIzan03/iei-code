@@ -1,3 +1,5 @@
+import os
+import subprocess
 import pandas as pd
 from models import Tipo
 import numpy
@@ -47,11 +49,17 @@ def check_direccion(direccion: str):
     
 
 # Wrapper : In the future the wrapper will return all the json data to the extractor instead of the extractor reading it directly.
-DATA_ROUTE = "wrappers/data_sources/edificios_entrega.json"
+working_directory = os.getcwd()
+DATA_ROUTE = rf"{working_directory}\wrappers\data_sources\edificios_entrega1.json"
+DATA_ROUTE_TEMP = rf"{working_directory}\wrappers\data_sources\edificios_entrega1_temp.json"
+SCRIPT_ROUTE = rf"{working_directory}\utils\DeleteDuplicates.ps1"
+command = f'powershell -File "{SCRIPT_ROUTE}" -InputFile "{DATA_ROUTE}" -OutputFile "{DATA_ROUTE_TEMP}"'
+
+result = subprocess.run(command, shell=True, capture_output=True, text=True)
 
 # Extractor: Read json data from the wrapper and filters the corresponding data to add them to the DB.
 
-df = pd.read_json(DATA_ROUTE)
+df = pd.read_json(DATA_ROUTE_TEMP)
 
 monumento_nombres = df["documentName"]
 monumento_tipos = df["documentName"].apply(lambda x: determinar_tipo(x, tipo_mapping))
@@ -65,7 +73,7 @@ localidad_nombres = df["municipality"].fillna("")
 
 provincia_nombres = df["territory"]
 
-def pass_data_to_service():
+def extract_eus():
     from models import MonumentoCreate, LocalidadCreate, ProvinciaCreate
     for i in range(len(monumento_nombres)):
         monumento = MonumentoCreate(
@@ -93,7 +101,3 @@ def print_codigo():
             file.write(str(provincia_nombres[i]) + '\n')
 
     print(monumento_direcciones[38])
-
-
-
-
