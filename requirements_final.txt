@@ -1,0 +1,28 @@
+
+DANI
+- Comprobar que el valor del código postal no supere el digito numéricos 52 en sus primeras posiciones -> Dataservice
+- Comprobar que la longitud del código postal sea de 4 o 5 dígitos numéricos
+    - En el caso de que tenga 4 dígitos, añadir un 0 a la izquierda
+- Avisar cuando se le añada un 0 a la izquierda al código postal
+- Avisar cuando el código postal sea incorrecto(que no cumpla lo de arriba) y por tanto se rechaze su inserción
+
+LIWEI
+- Si no tiene longitud y latitud, entonces rechazar la inserción y avisar.
+- Comprobar el rango de valores de la longitud y latitud, latitud (-90, 90) y longitud (-180, 180), si no cumple con el rango, rechazar la inserción y avisar.
+- Comprobar que la longitud y latitud sean números decimales, si no lo son, rechazar la inserción y avisar.
+
+IZAN
+- Crear un registro de los datos cargados correctamente:
+    - Número de monumentos que se han cargado correctamente
+    - Número de datos con errores y reparados
+    - Número de datos con errores y rechazados
+
+- Crear un logger con esta estructura (registro con errores y reparados): {Fuente de datos, nombre, Localidad, motivo del error, operación
+realizada}
+
+- Crear un logger con esta otra estructura (registro con errores y rechazados): {Fuente de datos, nombre, Localidad, motivo del error}
+
+JIANENG Y CARLOS
+- Configurar Linux en máquina virtual
+- Preguntar dudas al profe
+- Establecer arquitectura para desarrollar front
