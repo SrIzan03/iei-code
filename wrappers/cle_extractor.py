@@ -106,12 +106,9 @@ def extract_cle():
         provincia = ProvinciaCreate(
             provincia_nombres[i],
         )
-        insert_into_db(monumento, localidad, provincia)
+        insert_into_db('cle', monumento, localidad, provincia)
 
 def print_example():
     with open('output.txt', 'w', encoding='utf8') as file:   
         for i in range(monumento_longitudes.size):
             file.write(str(monumento_longitudes[i]) + '\n')
-
-def get_tipo():
-    print(monumento_codigos_postales[81])

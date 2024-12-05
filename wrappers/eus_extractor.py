@@ -91,7 +91,7 @@ def extract_eus():
         provincia = ProvinciaCreate(
             provincia_nombres[i],
         )
-        insert_into_db(monumento, localidad, provincia)
+        insert_into_db('eus', monumento, localidad, provincia)
 
 
 

@@ -61,7 +61,7 @@ def extract(json: str):
 
         provincia = ProvinciaCreate(row['PROVINCIA'])
 
-        insert_into_db(monumento, localidad, provincia)
+        insert_into_db('cv', monumento, localidad, provincia)
 
 def extract_cv():
     json = wrap()

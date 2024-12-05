@@ -1,26 +1,26 @@
 from models import MonumentoCreate, LocalidadCreate, ProvinciaCreate, Provincia, Monumento, Localidad
 from data import get_provincia_by_nombre, get_localidad_by_nombre, get_monumento_by_nombre, create_provincia, create_localidad, create_monumento 
 from .geo_api_service import get_direccion_and_cod_postal 
+from utils import MyLogger
 
-def insert_into_db(monumento: MonumentoCreate, localidad: LocalidadCreate, provincia: ProvinciaCreate):
+logger = MyLogger()
+
+def insert_into_db(dataSource: str, monumento: MonumentoCreate, localidad: LocalidadCreate, provincia: ProvinciaCreate):
     if not monumento.latitud or not monumento.longitud:
-        #to do logger
-        print("Empty latitud or longitud")
+        logger.log_excluded(dataSource, monumento.nombre, localidad.nombre, 'Error in coordinates: Empty latitud or longitud')
         return
     
     if not float_format(monumento.latitud) or not float_format(monumento.longitud):
-        #to do logger
-        print("Wrong float format")
+        logger.log_excluded(dataSource, monumento.nombre, localidad.nombre, 'Error in coordinates: Wrong float format')
         return
 
     if not lat_long_range_value(monumento.latitud, monumento.longitud):
-        #to do logger
-        print("Not in range")
+        logger.log_excluded(dataSource, monumento.nombre, localidad.nombre, 'Error in coordinates: Out of range')
         return
 
     provincia_model = create_provincia_model(provincia)
     localidad_model = create_localidad_model(localidad, provincia_model)
-    create_monumento_model(monumento, localidad_model)
+    create_monumento_model(dataSource, monumento, localidad_model)
 
 def create_provincia_model(provincia: ProvinciaCreate):
     existing_provincia = get_provincia_by_nombre(provincia.nombre.upper())
@@ -46,19 +46,27 @@ def exists_monumento(mon_nombre: str):
         return existing_monumento
     
 def lat_long_range_value(lat, long):
-    return lat >= -90 and lat <= 90 and long >= -180 and long <= 180
+    try:
+        lat_int = int(str(lat).split('.')[0])
+        long_int = int(str(long).split('.')[0])
 
-def float_format(Lat):
-    return isinstance(Lat, float)
+        return lat_int >= -90 and lat_int <= 90 and long_int >= -180 and long_int <= 180
+    except ValueError:
+        return False
 
-skip_count = 0
+def float_format(value):
+    value_str = str(value)
+    value_str = value_str.replace('-', '', 1)
 
-def create_monumento_model(monumento: MonumentoCreate, localidad: Localidad):
-    global skip_count
+    if value_str.replace('.', '', 1).isdigit():
+        return True
+    else:
+        return False
+
+def create_monumento_model(dataSource: str, monumento: MonumentoCreate, localidad: Localidad):
     existing_monumento = get_monumento_by_nombre(monumento.nombre)
     if existing_monumento:
-        skip_count += 1
-        print(f"Monumento {monumento.nombre} already exists. Skipped {skip_count} times.")
+        logger.log_excluded(dataSource, monumento.nombre, localidad.nombre, 'Error in monument: Already exists')
         return existing_monumento
     else:
         codigo_postal = monumento.codigo_postal
@@ -85,5 +93,5 @@ def create_monumento_model(monumento: MonumentoCreate, localidad: Localidad):
             localidad.codigo
         )
         create_monumento(m)
+        logger.log_succeded(monumento.nombre)
         return m
-
