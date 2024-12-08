@@ -62,6 +62,25 @@ def float_format(value):
         return True
     else:
         return False
+    
+def postal_code_length(postal_code, dataSource, monumento, localidad):
+    if len(postal_code) <= 3 or len(postal_code) > 5:
+        logger.log_excluded(dataSource, monumento.nombre, localidad.nombre, 'Error in postal code: Wrong postal code length')
+        return False
+    elif len(postal_code) == 4:
+        logger.log_repaired(dataSource, monumento.nombre, localidad.nombre, 'Error in postal code: postal code length is 4', "A 0 has been added to the postal code")
+        return True
+    else:
+        return True
+    
+def postal_code_range_value(value):
+    postal_code_identifier = int(value[:2])
+
+    if 1 <= postal_code_identifier <= 52:
+        return True
+    else:
+        return False
+
 
 def create_monumento_model(dataSource: str, monumento: MonumentoCreate, localidad: Localidad):
     existing_monumento = get_monumento_by_nombre(monumento.nombre)
@@ -79,8 +98,18 @@ def create_monumento_model(dataSource: str, monumento: MonumentoCreate, localida
         elif codigo_postal == '': 
             _, codigo_postal = get_direccion_and_cod_postal(monumento.latitud, monumento.longitud)
 
-        if codigo_postal != '':
+        if not codigo_postal.isdigit() or codigo_postal == '':
+            logger.log_excluded(dataSource, monumento.nombre, localidad.nombre, 'Error in postal code: Wrong postal code format')
+            return
+        
+        if postal_code_length(codigo_postal, dataSource, monumento, localidad):
             codigo_postal = f"{int(codigo_postal):05}"
+        else:
+            return
+
+        if not postal_code_range_value(codigo_postal):
+            logger.log_excluded(dataSource, monumento.nombre, localidad.nombre, 'Error in postal code: The postal code does not exist in Spain')
+            return
 
         m = Monumento(
             monumento.nombre,
