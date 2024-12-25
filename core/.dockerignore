@@ -1,0 +1,38 @@
+# Ignorar entornos virtuales
+.venv
+env/
+venv/
+
+# Ignorar cachés de Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+
+# Ignorar archivos de bases de datos locales
+*.db
+*.sqlite3
+
+# Ignorar archivos de registro
+*.log
+
+# Ignorar archivos de configuración de IDE
+.vscode/
+.idea/
+
+# Ignorar archivos de control de versiones
+.git
+.gitignore
+
+# Ignorar archivos de Docker
+.dockerignore
+Dockerfile
+
+# Ignorar archivos de entorno
+.env
+
+# Ignorar archivos de salida
+output.txt
+
+# Ignorar archivos de datos temporales
+wrappers/data_sources/edificios_entrega1_temp.json

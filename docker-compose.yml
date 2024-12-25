@@ -1,4 +1,34 @@
 services:
+  app:
+    build:
+      context: ./core
+    ports:
+      - "8080:8080"
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
+    links:
+      - iei-bot
+      - wrapper-cle
+      - wrapper-cv
+      - wrapper-eus
+      - db
+
+  db:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5431:5432"
+
   iei-bot:
     build:
       context: ./iei-bot
@@ -7,6 +37,57 @@ services:
     volumes:
       - ./iei-bot:/app
       - ./iei-bot/chromedriver-linux64:/chromedriver-linux64
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
+
+  wrapper-cle:
+    build:
+      context: ./wrapper-cle
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./wrapper-cle:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
+
+  wrapper-cv:
+    build:
+      context: ./wrapper-cv
+    ports:
+      - "8002:8002"
+    volumes:
+      - ./wrapper-cv:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
+
+  wrapper-eus:
+    build:
+      context: ./wrapper-eus
+    ports:
+      - "8003:8003"
+    volumes:
+      - ./wrapper-eus:/app
     environment:
       - PYTHONUNBUFFERED=1
     restart: unless-stopped

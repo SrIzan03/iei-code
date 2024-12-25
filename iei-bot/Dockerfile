@@ -18,7 +18,7 @@ RUN apt-get update && apt-get install -y \
 COPY chromedriver-linux64 /chromedriver-linux64
 
 # Set working directory
-WORKDIR /app
+WORKDIR /iei-bot
 
 # Install Poetry
 RUN pip install poetry
@@ -30,7 +30,7 @@ COPY pyproject.toml poetry.lock ./
 RUN poetry config virtualenvs.create false
 
 # Install dependencies
-RUN poetry install --no-dev
+RUN poetry install --only main
 
 # Copy application code
 COPY . .
