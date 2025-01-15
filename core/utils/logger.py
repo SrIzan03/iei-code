@@ -1,3 +1,4 @@
+import io
 import logging
 
 class OnlyWarningsFilter(logging.Filter):
@@ -12,9 +13,13 @@ class OnlyInfoFilter(logging.Filter):
     def filter(self, record):
         return record.levelno == logging.INFO
 
-repaired_msg = 'Error reparado: {dataSource}, {monumentName}, {localityName}, {errorReason}, {operation}'
-excluded_msg = 'Error rechazado: {dataSource}, {monumentName}, {localityName}, {errorReason}'
+repaired_msg = '{dataSource}, {monumentName}, {localityName}, {errorReason}, {operation}'
+excluded_msg = '{dataSource}, {monumentName}, {localityName}, {errorReason}'
 succeded_msg = 'Dato insertado: {monumentName}'
+
+repaired_stream = io.StringIO()
+excluded_stream = io.StringIO()
+succeded_stream = io.StringIO()
 
 class MyLogger:
     _logger = None
@@ -24,15 +29,15 @@ class MyLogger:
 
     def __init__(self):
         if MyLogger._logger is None:
-            repaired_file_handler = logging.FileHandler('./logs/repaired.log', encoding='utf_8')
+            repaired_file_handler = logging.StreamHandler(repaired_stream)
             repaired_file_handler.setLevel(logging.WARNING)
             repaired_file_handler.addFilter(OnlyWarningsFilter())
 
-            excluded_file_handler = logging.FileHandler('./logs/excluded.log', encoding='utf_8')
+            excluded_file_handler = logging.StreamHandler(excluded_stream)
             excluded_file_handler.setLevel(logging.ERROR)
             excluded_file_handler.addFilter(OnlyErrorsFilter())
 
-            succeded_file_handler = logging.FileHandler('./logs/succeded.log', encoding='utf_8')
+            succeded_file_handler = logging.StreamHandler(succeded_stream)
             succeded_file_handler.setLevel(logging.INFO)
             succeded_file_handler.addFilter(OnlyInfoFilter())
 
