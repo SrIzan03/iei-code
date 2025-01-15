@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gnupg \
     && wget -q https://packages.microsoft.com/config/debian/11/packages-microsoft-prod.deb \
     && dpkg -i packages-microsoft-prod.deb \
+    && dpkg --add-architecture amd64 \
     && apt-get update \
     && apt-get install -y --no-install-recommends powershell \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
