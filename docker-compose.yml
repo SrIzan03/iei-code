@@ -46,7 +46,11 @@ services:
           memory: 2G
         reservations:
           memory: 1G
-
+  web:
+    build:
+      context: ./frontend
+    ports: 
+      - "4321:4321"
   wrapper-cle:
     build:
       context: ./wrapper-cle
