@@ -51,6 +51,8 @@ services:
       context: ./frontend
     ports: 
       - "4321:4321"
+    volumes:
+      - "./frontend:/app"
   wrapper-cle:
     build:
       context: ./wrapper-cle
