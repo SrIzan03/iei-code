@@ -1,10 +1,22 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import Checkbox from "../../components/Checkbox.astro"
 
 ---
 
 <Layout>
-    <div class="h-screen flex items-center justify-center">
-        <div>Hola caracola</div>
+    <div class="h-screen flex flex-col items-center justify-center gap-20">
+        <h1 class="text-2xl/7 font-bold text-gray-900">
+            Carga del almacén de datos
+        </h1>
+        <div class="h-auto flex items-start justify-center gap-7">
+            <h2>Seleccione fuente:</h2>
+            <div class="flex items-start justify-center flex-col flex-wrap">
+                <Checkbox id="all-selected" text="Todas las opciones" />
+                <Checkbox id="castilla-leon" text="Castilla y León" />
+                <Checkbox id="com-val" text="Comunitat Valenciana" />
+                <Checkbox id="euskadi" text="Euskadi" />
+            </div>
+        </div>
     </div>
 </Layout>
