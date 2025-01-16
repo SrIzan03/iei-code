@@ -4,7 +4,7 @@ FROM python:3.13-slim
 RUN apt-get update && apt-get install -y
 
 # # Set working directory
-WORKDIR /core
+WORKDIR /app
 
 # # Install Poetry
 RUN pip install poetry
