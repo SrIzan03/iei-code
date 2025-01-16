@@ -49,7 +49,7 @@ def insert_into_db(dataSource: str, monumento: MonumentoCreate, localidad: Local
         logger.log_excluded(dataSource, monumento.nombre, localidad.nombre, 'Error in postal code: Empty postal code')
         return
 
-    provincia_model = create_provincia_model(provincia, monumento)
+    provincia_model = create_provincia_model(provincia, monumento, dataSource)
     localidad_model = create_localidad_model(localidad, provincia_model)
     create_monumento_model(dataSource, monumento, localidad_model)
 
@@ -65,13 +65,13 @@ def create_provincia_model(provincia: ProvinciaCreate, monumento: MonumentoCreat
         else:
             postal_code_identifier = int(monumento.codigo_postal[:2])
             provincia_name = determinar_provincia(postal_code_identifier, cp_mapping)
-            existing_provincia = get_provincia_by_nombre(provincia.nombre.upper())
+            existing_provincia = get_provincia_by_nombre(provincia_name)
             if existing_provincia:
                 return existing_provincia
             
-            p = Provincia(None, provincia_name.nombre.upper())
+            p = Provincia(None, provincia_name.upper())
             create_provincia(p)
-            logger.log_repaired(dataSource, monumento.nombre, provincia_name.nombre, "Error in province : province's name is wrong", "provice's name obtained by postal code")
+            logger.log_repaired(dataSource, monumento.nombre, provincia_name, "Error in province : province's name is wrong", "Province's name obtained by postal code")
             return p
 
 def create_localidad_model(localidad: LocalidadCreate, provincia: Provincia):
