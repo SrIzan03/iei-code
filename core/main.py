@@ -48,7 +48,7 @@ async def database_init():
 @app.get("/logs")
 async def get_logs():
     succeded = logger.succeded_counter
-    repaired_content = logger.repaired_stream.getvalue()
-    excluded_content = logger.excluded_stream.getvalue()
-    result = "Número de registros cargados correctamente: " + succeded + "\n\n" + "Registros con errores y reparados:\n" + repaired_content + "\n\n" + "Registros con errores y rechazados: \n" + excluded_content
+    repaired_content = logger.get_logs('repaired')
+    excluded_content = logger.get_logs('excluded')
+    result = "Número de registros cargados correctamente: " + str(succeded) + "\n\n" + "Registros con errores y reparados:\n" + repaired_content + "\n\n" + "Registros con errores y rechazados: \n" + excluded_content
     return JSONResponse(content=result)

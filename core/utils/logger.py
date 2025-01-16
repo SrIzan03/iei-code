@@ -17,9 +17,6 @@ repaired_msg = '{dataSource}, {monumentName}, {localityName}, {errorReason}, {op
 excluded_msg = '{dataSource}, {monumentName}, {localityName}, {errorReason}'
 succeded_msg = 'Dato insertado: {monumentName}'
 
-repaired_stream = io.StringIO()
-excluded_stream = io.StringIO()
-succeded_stream = io.StringIO()
 
 class MyLogger:
     _logger = None
@@ -29,6 +26,10 @@ class MyLogger:
 
     def __init__(self):
         if MyLogger._logger is None:
+            repaired_stream = io.StringIO()
+            excluded_stream = io.StringIO()
+            succeded_stream = io.StringIO()
+
             repaired_file_handler = logging.StreamHandler(repaired_stream)
             repaired_file_handler.setLevel(logging.WARNING)
             repaired_file_handler.addFilter(OnlyWarningsFilter())
@@ -46,6 +47,13 @@ class MyLogger:
             MyLogger._logger.addHandler(excluded_file_handler)
             MyLogger._logger.addHandler(succeded_file_handler)
             MyLogger._logger.setLevel(logging.INFO)
+
+             # Guardar streams en un diccionario
+            MyLogger._streams = {
+                "repaired": repaired_stream,
+                "excluded": excluded_stream,
+                "succeded": succeded_stream,
+            } 
 
         self.logger = MyLogger._logger
 
@@ -66,3 +74,11 @@ class MyLogger:
         print(f'Repaired: {cls.repaired_counter}')
         print(f'Excluded: {cls.excluded_counter}')
         print(f'Succeded: {cls.succeded_counter}')
+    
+    @classmethod
+    def get_logs(cls, log_type):
+        stream = cls._streams.get(log_type)
+        if stream:
+            return stream.getvalue()
+        else:
+            raise ValueError(f"No existe un stream para el tipo '{log_type}'")
