@@ -4,7 +4,6 @@ from extractors import extract_cv, extract_cle, extract_eus
 from dotenv import load_dotenv
 from database import create_database, clean_database
 from data import get_all_monuments
-from searcher import main as search_app
 
 
 from utils import logger
