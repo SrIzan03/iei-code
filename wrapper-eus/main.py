@@ -6,8 +6,8 @@ def wrap():
     import pandas as pd
 
     working_directory = os.getcwd()
-    DATA_ROUTE = rf"{working_directory}/edificios_entrega1.json"
-    DATA_ROUTE_TEMP = rf"{working_directory}/edificios_entrega1_temp.json"
+    DATA_ROUTE = rf"{working_directory}/edificios_final.json"
+    DATA_ROUTE_TEMP = rf"{working_directory}/edificios_final_temp.json"
     SCRIPT_ROUTE = rf"{working_directory}/utils/DeleteDuplicates.ps1"
     command = f'pwsh -File "{SCRIPT_ROUTE}" -InputFile "{DATA_ROUTE}" -OutputFile "{DATA_ROUTE_TEMP}"'
 

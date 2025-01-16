@@ -5,6 +5,33 @@ from utils import MyLogger
 
 logger = MyLogger()
 
+provincias_nombres = ["GIPUZKOA", "BIZKAIA", "ARABA/ÁLAVA", "ÁVILA", "VALLADOLID", "BURGOS", "SEGOVIA", "SALAMANCA", "LEÓN", "ZAMORA", "SORIA", "PALENCIA", "VALENCIA", "ALICANTE", "CASTELLÓN"]
+
+cp_mapping = {
+    "01": "ARABA/ÁLAVA",
+    "20": "GIPUZKOA",
+    "48": "BIZKAIA",
+
+    "05": "ÁVILA",
+    "47": "VALLADOLID",
+    "09": "BURGOS",
+    "40": "SEGOVIA",
+    "37": "SALAMANCA",
+    "24": "LEÓN",
+    "49": "ZAMORA",
+    "42": "SORIA",
+    "34": "PALENCIA",
+
+    "46": "VALENCIA",
+    "03": "ALICANTE",
+    "12": "CASTELLÓN",
+}
+
+def determinar_provincia(code, cp_mapping):
+    for cp, provincia in cp_mapping.items():
+        if (code == cp) :
+            return provincia
+
 def insert_into_db(dataSource: str, monumento: MonumentoCreate, localidad: LocalidadCreate, provincia: ProvinciaCreate):
     if not monumento.latitud or not monumento.longitud:
         logger.log_excluded(dataSource, monumento.nombre, localidad.nombre, 'Error in coordinates: Empty latitud or longitud')
@@ -18,18 +45,28 @@ def insert_into_db(dataSource: str, monumento: MonumentoCreate, localidad: Local
         logger.log_excluded(dataSource, monumento.nombre, localidad.nombre, 'Error in coordinates: Out of range')
         return
 
-    provincia_model = create_provincia_model(provincia)
+    provincia_model = create_provincia_model(provincia, monumento)
     localidad_model = create_localidad_model(localidad, provincia_model)
     create_monumento_model(dataSource, monumento, localidad_model)
 
-def create_provincia_model(provincia: ProvinciaCreate):
+def create_provincia_model(provincia: ProvinciaCreate, monumento: MonumentoCreate):
     existing_provincia = get_provincia_by_nombre(provincia.nombre.upper())
     if existing_provincia:
         return existing_provincia
     else:
-        p = Provincia(None, provincia.nombre.upper())
-        create_provincia(p)
-        return p
+        if(check_provincia_name(provincia.nombre.upper())):
+            p = Provincia(None, provincia.nombre.upper())
+            create_provincia(p)
+            return p
+        else:
+            _, codigo_postal = get_direccion_and_cod_postal(monumento.latitud, monumento.longitud)
+            provincia_name = determinar_provincia(codigo_postal, cp_mapping)
+            existing_provincia = get_provincia_by_nombre(provincia.nombre.upper())
+            if existing_provincia:
+                return existing_provincia
+            
+            p = Provincia(None, provincia_name.nombre.upper())
+            create_provincia(p)
 
 def create_localidad_model(localidad: LocalidadCreate, provincia: Provincia):
     existing_localidad = get_localidad_by_nombre(localidad.nombre.upper())
@@ -52,6 +89,12 @@ def lat_long_range_value(lat, long):
 
         return lat_int >= -90 and lat_int <= 90 and long_int >= -180 and long_int <= 180
     except ValueError:
+        return False
+    
+def check_provincia_name(name):
+    if (name in provincias_nombres):
+        return True
+    else:
         return False
 
 def float_format(value):
