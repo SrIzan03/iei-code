@@ -22,6 +22,13 @@ def getTipo(denominacion: str, codCategoria: int):
         return Tipo.PUENTE
     return Tipo.OTROS
 
+def get_postal_code_from_igpcv(igpcv: str) -> str:
+    # Extract first 5 digits, removing dots
+    digits = ''.join(filter(str.isdigit, igpcv))
+    if len(digits) >= 5:
+        return digits[:5].zfill(5)
+    return ''
+
 def extract(json: str):
     df = pd.read_json(StringIO(json))
 
@@ -38,28 +45,30 @@ def extract(json: str):
         response = utm_to_lat_long(utm_norte, utm_este)
 
         codCategoria = row['CODCATEGORIA']
-
         tipo = getTipo(denominacion, codCategoria)
         latitude = response.get('latitude')
         longitude = response.get('longitude')
 
+        # Get postal code from IGPCV instead of geocoding
+        codigo_postal = get_postal_code_from_igpcv(row['IGPCV'])
+        
         if longitude and latitude:
-            dir, cp = get_direccion_and_cod_postal(latitude, longitude)
+            dir, _ = get_direccion_and_cod_postal(latitude, longitude)
+        else:
+            dir = ''
 
         monumento = MonumentoCreate(
             denominacion,
             tipo,
             dir,
-            cp,
+            codigo_postal,
             longitude,
             latitude,
             ''
         )
 
         localidad = LocalidadCreate(row['MUNICIPIO'])
-
         provincia = ProvinciaCreate(row['PROVINCIA'])
-
         insert_into_db('cv', monumento, localidad, provincia)
 
 def extract_cv():
