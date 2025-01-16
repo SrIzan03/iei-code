@@ -46,6 +46,7 @@ services:
           memory: 2G
         reservations:
           memory: 1G
+
   web:
     build:
       context: ./frontend
@@ -53,6 +54,7 @@ services:
       - "4321:4321"
     volumes:
       - "./frontend:/app"
+
   wrapper-cle:
     build:
       context: ./wrapper-cle
