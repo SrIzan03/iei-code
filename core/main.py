@@ -3,12 +3,9 @@ import utils.remove_logs
 from extractors import extract_cv, extract_cle, extract_eus
 from dotenv import load_dotenv
 from database import create_database, clean_database
-<<<<<<< Updated upstream
 from data import get_all_monuments
-=======
-from searcher import app as search_app
+from searcher import main as search_app
 
->>>>>>> Stashed changes
 
 from utils import logger
 from fastapi import APIRouter, FastAPI
@@ -18,15 +15,10 @@ from models import Tipo
 
 app = FastAPI()
 
-router = APIRouter()
-
-app.include_router(router)
-
 logger = logger.MyLogger()
 
 load_dotenv()
 
-# More detailed CORS configuration
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:4321"],
@@ -34,8 +26,7 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "DELETE"],
     allow_headers=["*"],
     expose_headers=["*"],
-    max_age=3600,
-)
+    max_age=3600,)
 
 @app.get("/load/cv")
 async def load_cv():
@@ -76,7 +67,6 @@ async def get_logs():
     result = "Número de registros cargados correctamente: " + str(succeded) + "\n\n" + "Registros con errores y reparados:\n" + repaired_content + "\n\n" + "Registros con errores y rechazados: \n" + excluded_content
     return JSONResponse(content=result)
 
-<<<<<<< Updated upstream
 @app.get("/monuments")
 async def get_monuments():
     monuments = get_all_monuments()
@@ -99,6 +89,3 @@ async def get_monuments():
 async def get_types():
     types = [tipo.value for tipo in Tipo]
     return JSONResponse(content={"types": types})
-=======
-app.mount("/searcher", search_app)
->>>>>>> Stashed changes
