@@ -1,7 +1,8 @@
 ---
 import Select from "./Select.astro";
 
-const types = ["Puente", "Castillo", "Muralla"];
+// Initialize with empty array, we'll populate it client-side
+const types = [];
 ---
 
 <form id="searchForm" class="bg-white rounded-lg p-6 shadow-md">
@@ -61,7 +62,26 @@ const types = ["Puente", "Castillo", "Muralla"];
 </form>
 
 <script>
+    async function loadTypes() {
+        try {
+            const response = await fetch('http://localhost:8080/types');
+            const data = await response.json();
+            const selectElement = document.getElementById('tipos');
+            if (selectElement) {
+                data.types.forEach((type: string) => {
+                    const option = document.createElement('option');
+                    option.value = type;
+                    option.textContent = type;
+                    selectElement.appendChild(option);
+                });
+            }
+        } catch (error) {
+            console.error('Error loading types:', error);
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
+        loadTypes();
         const form = document.getElementById('searchForm');
         
         form?.addEventListener('submit', async (e: Event) => {

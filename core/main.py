@@ -9,6 +9,7 @@ from utils import logger
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from models import Tipo
 
 app = FastAPI()
 
@@ -83,3 +84,8 @@ async def get_monuments():
         for monument in monuments
     ]
     return JSONResponse(content={"monuments": transformed_monuments})
+
+@app.get("/types")
+async def get_types():
+    types = [tipo.value for tipo in Tipo]
+    return JSONResponse(content={"types": types})
