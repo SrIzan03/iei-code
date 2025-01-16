@@ -3,7 +3,7 @@ import pandas as pd
 from io import StringIO
 from math import isnan
 from models import Tipo, MonumentoCreate, ProvinciaCreate, LocalidadCreate
-from services import utm_to_lat_long, insert_into_db, exists_monumento, get_cv_data
+from services import utm_to_lat_long, insert_into_db, exists_monumento, get_cv_data, get_direccion_and_cod_postal
 
 def getTipo(denominacion: str, codCategoria: int):
     denominacion = denominacion.lower()
@@ -36,18 +36,21 @@ def extract(json: str):
             continue
 
         response = utm_to_lat_long(utm_norte, utm_este)
-        
+
         codCategoria = row['CODCATEGORIA']
 
         tipo = getTipo(denominacion, codCategoria)
         latitude = response.get('latitude')
         longitude = response.get('longitude')
 
+        if longitude and latitude:
+            dir, cp = get_direccion_and_cod_postal(latitude, longitude)
+
         monumento = MonumentoCreate(
             denominacion,
             tipo,
-            '',
-            '',
+            dir,
+            cp,
             longitude,
             latitude,
             ''
