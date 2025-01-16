@@ -44,12 +44,16 @@ def insert_into_db(dataSource: str, monumento: MonumentoCreate, localidad: Local
     if not lat_long_range_value(monumento.latitud, monumento.longitud):
         logger.log_excluded(dataSource, monumento.nombre, localidad.nombre, 'Error in coordinates: Out of range')
         return
+    
+    if not monumento.codigo_postal:
+        logger.log_excluded(dataSource, monumento.nombre, localidad.nombre, 'Error in postal code: Empty postal code')
+        return
 
     provincia_model = create_provincia_model(provincia, monumento)
     localidad_model = create_localidad_model(localidad, provincia_model)
     create_monumento_model(dataSource, monumento, localidad_model)
 
-def create_provincia_model(provincia: ProvinciaCreate, monumento: MonumentoCreate):
+def create_provincia_model(provincia: ProvinciaCreate, monumento: MonumentoCreate, dataSource: str):
     existing_provincia = get_provincia_by_nombre(provincia.nombre.upper())
     if existing_provincia:
         return existing_provincia
@@ -59,14 +63,16 @@ def create_provincia_model(provincia: ProvinciaCreate, monumento: MonumentoCreat
             create_provincia(p)
             return p
         else:
-            _, codigo_postal = get_direccion_and_cod_postal(monumento.latitud, monumento.longitud)
-            provincia_name = determinar_provincia(codigo_postal, cp_mapping)
+            postal_code_identifier = int(monumento.codigo_postal[:2])
+            provincia_name = determinar_provincia(postal_code_identifier, cp_mapping)
             existing_provincia = get_provincia_by_nombre(provincia.nombre.upper())
             if existing_provincia:
                 return existing_provincia
             
             p = Provincia(None, provincia_name.nombre.upper())
             create_provincia(p)
+            logger.log_repaired(dataSource, monumento.nombre, provincia_name.nombre, "Error in province : province's name is wrong", "provice's name obtained by postal code")
+            return p
 
 def create_localidad_model(localidad: LocalidadCreate, provincia: Provincia):
     existing_localidad = get_localidad_by_nombre(localidad.nombre.upper())
@@ -145,12 +151,8 @@ def create_monumento_model(dataSource: str, monumento: MonumentoCreate, localida
         codigo_postal = monumento.codigo_postal
         direccion = monumento.direccion
 
-        if codigo_postal == '' and direccion == '':
-            direccion, codigo_postal = get_direccion_and_cod_postal(monumento.latitud, monumento.longitud)
-        elif direccion == '':
+        if direccion == '':
             direccion, _ = get_direccion_and_cod_postal(monumento.latitud, monumento.longitud)
-        elif codigo_postal == '': 
-            _, codigo_postal = get_direccion_and_cod_postal(monumento.latitud, monumento.longitud)
 
         if codigo_postal == '':
             logger.log_excluded(dataSource, monumento.nombre, localidad.nombre, 'Error in postal code: Wrong postal code format')
