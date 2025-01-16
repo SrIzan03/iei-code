@@ -1,0 +1,4 @@
+FastAPI
+uvicorn
+psycopg2
+pydantic
