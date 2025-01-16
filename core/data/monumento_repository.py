@@ -37,3 +37,16 @@ def get_monumento_by_nombre(nombre: str):
         return cur.fetchone()
     finally:
         cur.close()
+
+def get_all_monuments():
+    _, cur = get_connection_cursor()
+    try:
+        cur.execute(
+            """
+            SELECT *
+            FROM Monumento
+            """
+        )
+        return cur.fetchall()
+    finally:
+        cur.close()

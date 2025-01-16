@@ -6,6 +6,7 @@ from .localidad_repository import (
 from .monumento_repository import (
     create_monumento,
     get_monumento_by_nombre,
+    get_all_monuments,
     create_monumento
 )
 from .provincia_repository import (
@@ -19,6 +20,7 @@ __all__ = [
     'get_localidad_by_nombre',
     'create_monumento',
     'get_monumento_by_nombre',
+    'get_all_monuments',
     'create_provincia',
     'get_provincia_by_nombre'
 ]

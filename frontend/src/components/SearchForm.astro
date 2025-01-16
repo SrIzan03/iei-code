@@ -1,0 +1,103 @@
+---
+import Select from "./Select.astro";
+
+const types = ["Puente", "Castillo", "Muralla"];
+---
+
+<form id="searchForm" class="bg-white rounded-lg p-6 shadow-md">
+    <div class="flex flex-col space-y-4">
+        <div class="flex gap-3 max-w-sm mx-auto justify-center items-center">
+            <label for="localidad">Localidad</label>
+            <input 
+                type="text"
+                placeholder="Add text" 
+                id="localidad" 
+                class="border border-gray-300 rounded-lg p-2"
+            />
+        </div>
+        <div class="flex gap-3 max-w-sm mx-auto justify-center items-center">
+            <label for="codigoPostal">Cod. Postal</label>
+            <input 
+                type="text"
+                placeholder="Add text" 
+                id="codigoPostal" 
+                class="border border-gray-300 rounded-lg p-2"
+            />
+        </div>
+        <div class="flex gap-3 max-w-sm mx-auto justify-center items-center">
+            <label for="provincia">Provincia</label>
+            <input 
+                type="text"
+                placeholder="Add text" 
+                id="provincia" 
+                class="border border-gray-300 rounded-lg p-2"
+            />
+        </div>
+        <div class="flex gap-3 max-w-sm mx-auto justify-center items-center">
+            <Select 
+                label="Tipo" 
+                id="tipos" 
+                options={types} 
+            />
+        </div>
+        <div class="flex gap-4 pt-2">
+            <a class="flex-1 bg-gray-300 text-black rounded-lg hover:bg-gray-400 transition-colors items-center justify-center" href="/">
+                <button 
+                    type="button"
+                    onclick="document.getElementById('searchForm').reset()"
+                    class="flex-1 w-full text-black py-2 px-4 rounded-lg hover:bg-grey-600 transition-colors"
+                >
+                    Cancelar
+                </button>
+        </a>
+            <button 
+                type="submit"
+                class="flex-1 bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors"
+            >
+                Buscar
+            </button>
+        </div>
+    </div>
+</form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('searchForm');
+        
+        form?.addEventListener('submit', async (e: Event) => {
+            e.preventDefault();
+            const formData = new FormData(e.target as HTMLFormElement);
+            const data = Object.fromEntries(formData);
+            
+            // Example of how you would handle the search and update the map
+            try {
+                // Replace with your actual API endpoint
+                const response = await fetch('/api/search', {
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                });
+                
+                const results = await response.json();
+                
+                // Clear existing markers
+                window.monumentMap.map.eachLayer((layer) => {
+                    if (layer instanceof L.Marker) {
+                        layer.remove();
+                    }
+                });
+
+                // Add new markers from search results
+                results.forEach((monument: any) => {
+                    window.monumentMap.addMarker(
+                        monument.latwgs84,
+                        monument.lonwgs84,
+                        monument.documentName,
+                        monument.documentDescription
+                    );
+                });
+            } catch (error) {
+                console.error('Error searching monuments:', error);
+            }
+        });
+    });
+</script> 

@@ -32,6 +32,7 @@ thread = "2.0.5"
 urllib3-secure-extra = "0.1.0"
 uvicorn = "0.21.1"
 psycopg2-binary = "^2.9.10"
+fastapi-cors = "^0.0.6"
 
 
 [build-system]

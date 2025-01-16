@@ -1,0 +1,24 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import SearchForm from "../../components/SearchForm.astro";
+import Map from "../../components/Map.astro";
+import SearchResults from "../../components/SearchResults.astro";
+---
+
+<Layout>
+    <div class="grid grid-rows-[auto_1fr_1fr] gap-8 h-screen p-8 bg-[#fff5d9]">
+        <!-- Title Row -->
+        <div class="flex justify-center items-center">
+            <h1 class="text-3xl font-bold">Buscador de monumentos de interés cultural</h1>
+        </div>
+
+        <!-- Form and Map Row -->
+        <div class="grid grid-cols-2 gap-8">
+            <SearchForm />
+            <Map />
+        </div>
+
+        <!-- Results Row -->
+        <SearchResults />
+    </div>
+</Layout>
