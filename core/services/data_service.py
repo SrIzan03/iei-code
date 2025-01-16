@@ -63,13 +63,13 @@ def create_provincia_model(provincia: ProvinciaCreate, monumento: MonumentoCreat
             create_provincia(p)
             return p
         else:
-            postal_code_identifier = int(monumento.codigo_postal[:2])
+            postal_code_identifier = monumento.codigo_postal[:2]
             provincia_name = determinar_provincia(postal_code_identifier, cp_mapping)
             existing_provincia = get_provincia_by_nombre(provincia_name)
             if existing_provincia:
                 return existing_provincia
             
-            p = Provincia(None, provincia_name.upper())
+            p = Provincia(None, provincia_name)
             create_provincia(p)
             logger.log_repaired(dataSource, monumento.nombre, provincia_name, "Error in province : province's name is wrong", "Province's name obtained by postal code")
             return p
