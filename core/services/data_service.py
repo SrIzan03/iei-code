@@ -63,7 +63,8 @@ def create_provincia_model(provincia: ProvinciaCreate, monumento: MonumentoCreat
             create_provincia(p)
             return p
         else:
-            postal_code_identifier = monumento.codigo_postal[:2]
+            postal_code_transformed = f"{int(monumento.codigo_postal):05}"
+            postal_code_identifier = postal_code_transformed[:2]
             provincia_name = determinar_provincia(postal_code_identifier, cp_mapping)
             existing_provincia = get_provincia_by_nombre(provincia_name)
             if existing_provincia:

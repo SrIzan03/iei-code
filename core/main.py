@@ -7,7 +7,7 @@ from data import get_all_monuments
 
 
 from utils import logger
-from fastapi import APIRouter, FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from models import Tipo
@@ -27,46 +27,64 @@ app.add_middleware(
     expose_headers=["*"],
     max_age=3600,)
 
-@app.get("/load/cv")
+@app.get("/load/cv", summary="Cargar datos de la Comunidad Valenciana", description="Carga los datos de la Comunidad Valenciana haciendo uso de un wrapper y un extractor.", tags=["Loader"])
 async def load_cv():
-    extract_cv()
-    return logger.get_counts()
+    try:
+        extract_cv()
+        return JSONResponse(status_code=200, content={"message": "Datos cargados correctamente"})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error interno: {e}")
 
-@app.get("/load/cle")
+@app.get("/load/cle", summary="Cargar datos de Castilla y León", description="Carga los datos de Castilla y León haciendo uso de un wrapper y un extractor.", tags=["Loader"])
 async def load_cle():
-    extract_cle()
-    return logger.get_counts()
+        extract_cle()
+        return JSONResponse(status_code=200, content={"message": "Datos cargados correctamente"})
 
-@app.get("/load/eus")
+@app.get("/load/eus", summary="Cargar datos de Euskadi", description="Carga los datos de Euskadi haciendo uso de un wrapper y un extractor.", tags=["Loader"])
 async def load_eus():
-    extract_eus()
-    return logger.get_counts()
+    try:
+        extract_eus()
+        return JSONResponse(status_code=200, content={"message": "Datos cargados correctamente"})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error interno: {e}")
 
-@app.get("/database/create_tables")
+@app.get("/database/create_tables", summary="Crear tablas de BD", description="Crea las tablas de Base de Datos necesarias para la posterior extracción.", tags=["Database"])
 async def database_create():
-    create_database()
-    return JSONResponse(content={"message": "Database created"})
+    try:
+        create_database()
+        return JSONResponse(status_code=201, content={"message": "Tablas de Base de Datos creadas con éxito"})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error interno: {e}")
 
-@app.get("/database/remove_tables")
+@app.get("/database/remove_tables", summary="Elimina las tablas de BD", description="Elimina las tablas de Base de Datos con el fin de limpiar los datos en ella.", tags=["Database"])
 async def database_clean():
-    clean_database()
-    return JSONResponse(content={"message": "Database cleaned"})
+    try:
+        clean_database()
+        return JSONResponse(status_code=200, content={"message": "Tablas de Base de Datos eliminadas con éxito"})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error interno: {e}")
 
-@app.get("/database/init")
+@app.get("/database/init", summary="Inicializa la BD", description="Inicializa la Base de Datos limpiando sus tablas y datos, y volviéndola a crear.", tags=["Database"])
 async def database_init():
-    clean_database()
-    create_database()
-    return JSONResponse(content={"message": "Database initialized"})
+    try:
+        clean_database()
+        create_database()
+        return JSONResponse(status_code=200, content={"message": "Base de datos inicializada con éxito"})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error interno: {e}")
 
-@app.get("/logs")
+@app.get("/logs", summary="Consume los registros", description="Consume los registros generados por las operaciones de carga", tags=["Logs"])
 async def get_logs():
-    succeded = logger.succeded_counter
-    repaired_content = logger.get_logs('repaired')
-    excluded_content = logger.get_logs('excluded')
-    result = "Número de registros cargados correctamente: " + str(succeded) + "\n\n" + "Registros con errores y reparados:\n" + repaired_content + "\n\n" + "Registros con errores y rechazados: \n" + excluded_content
-    return JSONResponse(content=result)
+    try:
+        succeded = logger.succeded_counter
+        repaired_content = logger.get_logs('repaired')
+        excluded_content = logger.get_logs('excluded')
+        result = "Número de registros cargados correctamente: " + str(succeded) + "\n\n" + "Registros con errores y reparados:\n" + repaired_content + "\n\n" + "Registros con errores y rechazados: \n" + excluded_content
+        return JSONResponse(content=result)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error interno: {e}")
 
-@app.get("/monuments")
+@app.get("/monuments", summary="Obtiene todos los monumentos", description="Obtiene todos los monumentos registrados en Base de Datos", tags=["Search"])
 async def get_monuments():
     monuments = get_all_monuments()
     transformed_monuments = [
@@ -84,7 +102,7 @@ async def get_monuments():
     ]
     return JSONResponse(content={"monuments": transformed_monuments})
 
-@app.get("/types")
+@app.get("/types", summary="Obtiene todos los tipos de monumentos", description="Obtiene todos los tipos de monumentos registrados en Base de Datos", tags=["Search"])
 async def get_types():
     types = [tipo.value for tipo in Tipo]
     return JSONResponse(content={"types": types})
