@@ -1,3 +1,5 @@
+from psycopg2 import sql
+
 def get_db_connection():
     import psycopg2
     from psycopg2 import sql

@@ -13,22 +13,32 @@ def get_db_connection():
 
 @router.get("/monuments/", response_model=List[dict])
 def search_monuments(
-    nombre: Optional[str] = Query(None),
+    codigo_postal: Optional[int] = Query(None),
     tipo: Optional[str] = Query(None),
-    localidad_codigo: Optional[int] = Query(None)
+    localidad: Optional[str] = Query(None),
+    provincia: Optional[str] = Query(None)
 ):
-    query = "SELECT * FROM Monumento WHERE TRUE"
+    query = """
+        SELECT Monumento.* 
+        FROM Monumento
+        JOIN Localidad ON Monumento.localidad_codigo = Localidad.codigo
+        JOIN Provincia ON Localidad.provincia_codigo = Provincia.codigo
+        WHERE TRUE
+    """
     params = []
 
-    if nombre:
-        query += " AND nombre ILIKE %s"
-        params.append(f"%{nombre}%")
+    if codigo_postal:
+        query += " AND Monumento.codigo_postal ILIKE %s"
+        params.append(f"%{codigo_postal}%")
     if tipo:
-        query += " AND tipo ILIKE %s"
+        query += " AND Monumento.tipo ILIKE %s"
         params.append(f"%{tipo}%")
-    if localidad_codigo is not None:
-        query += " AND localidad_codigo = %s"
-        params.append(localidad_codigo)
+    if localidad:
+        query += " AND Localidad.nombre ILIKE %s"
+        params.append(f"%{localidad}%")
+    if provincia:
+        query += " AND Provincia.nombre ILIKE %s"
+        params.append(f"%{provincia}%")
 
     try:
         conn = get_db_connection()
