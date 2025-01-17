@@ -4,8 +4,7 @@ from dotenv import load_dotenv
 from database import create_database, clean_database
 from data import get_all_monuments, get_filtered_monuments
 from fastapi import Query
-
-
+import asyncio
 from utils import logger
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
@@ -114,4 +113,6 @@ async def get_types():
     types = [tipo.value for tipo in Tipo]
     return JSONResponse(content={"types": types})
 
-database_init()
+@app.on_event("startup")
+async def startup():
+    await database_init()
