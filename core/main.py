@@ -3,7 +3,8 @@ import utils.remove_logs
 from extractors import extract_cv, extract_cle, extract_eus
 from dotenv import load_dotenv
 from database import create_database, clean_database
-from data import get_all_monuments
+from data import get_all_monuments, get_filtered_monuments
+from fastapi import Query
 
 
 from utils import logger
@@ -84,9 +85,14 @@ async def get_logs():
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error interno: {e}")
 
-@app.get("/monuments", summary="Obtiene todos los monumentos", description="Obtiene todos los monumentos registrados en Base de Datos", tags=["Search"])
-async def get_monuments():
-    monuments = get_all_monuments()
+@app.get("/monuments", summary="Obtiene todos los monumentos que coincidan con los filtros", description="Obtiene todos los monumentos registrados en Base de Datos que coincidan con los filtros proporcionados", tags=["Search"])
+async def get_monuments(
+    localidad: str = Query(None, description="Filter by localidad name"),
+    codigo_postal: str = Query(None, description="Filter by postal code"),
+    provincia: str = Query(None, description="Filter by provincia name"),
+    tipo: Tipo = Query(None, description="Filter by monument type")
+):
+    monuments = get_filtered_monuments(localidad, codigo_postal, provincia, tipo)
     transformed_monuments = [
         {
             "nombre": monument[0],
@@ -96,7 +102,8 @@ async def get_monuments():
             "longitud": monument[4],
             "latitud": monument[5],
             "descripcion": monument[6],
-            "localidad_cod": monument[7]
+            "localidad": monument[7],
+            "provincia": monument[8]
         }
         for monument in monuments
     ]

@@ -1,2 +1,21 @@
-<div class="bg-white rounded-lg p-6 shadow-md h-full">
+<div class="bg-white rounded-lg p-6 shadow-md h-full overflow-auto">
     <h2 class="text-xl mb-4">Resultados</h2>
+    <table class="min-w-full">
+        <thead>
+            <tr class="bg-gray-100">
+                <th class="py-2 px-4 text-left">Nombre</th>
+                <th class="py-2 px-4 text-left">Tipo</th>
+                <th class="py-2 px-4 text-left">Dirección</th>
+                <th class="py-2 px-4 text-left">Código Postal</th>
+                <th class="py-2 px-4 text-left">Localidad</th>
+                <th class="py-2 px-4 text-left">Provincia</th>
+                <th class="py-2 px-4 text-left">Longitud</th>
+                <th class="py-2 px-4 text-left">Latitud</th>
+                <th class="py-2 px-4 text-left">Descripción</th>
+            </tr>
+        </thead>
+        <tbody id="resultsTable">
+            <!-- Results will be dynamically inserted here -->
+        </tbody>
+    </table>
+</div>

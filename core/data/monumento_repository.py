@@ -50,3 +50,35 @@ def get_all_monuments():
         return cur.fetchall()
     finally:
         cur.close()
+
+def get_filtered_monuments(localidad=None, codigo_postal=None, provincia=None, tipo=None):
+    _, cur = get_connection_cursor()
+    try:
+        query = """
+            SELECT m.nombre, m.tipo, m.direccion, m.codigo_postal, 
+                   m.longitud, m.latitud, m.descripcion, l.nombre as localidad,
+                   p.nombre as provincia
+            FROM Monumento m
+            JOIN Localidad l ON m.localidad_codigo = l.codigo
+            JOIN Provincia p ON l.provincia_codigo = p.codigo
+            WHERE 1=1
+        """
+        params = []
+
+        if localidad:
+            query += " AND l.nombre ILIKE %s"
+            params.append(f"%{localidad}%")
+        if codigo_postal:
+            query += " AND m.codigo_postal LIKE %s"
+            params.append(f"%{codigo_postal}%")
+        if provincia:
+            query += " AND p.nombre ILIKE %s"
+            params.append(f"%{provincia}%")
+        if tipo:
+            query += " AND m.tipo = %s"
+            params.append(tipo)
+
+        cur.execute(query, params)
+        return cur.fetchall()
+    finally:
+        cur.close()

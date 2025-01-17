@@ -7,6 +7,7 @@ from .monumento_repository import (
     create_monumento,
     get_monumento_by_nombre,
     get_all_monuments,
+    get_filtered_monuments,
     create_monumento
 )
 from .provincia_repository import (
@@ -21,6 +22,7 @@ __all__ = [
     'create_monumento',
     'get_monumento_by_nombre',
     'get_all_monuments',
+    'get_filtered_monuments',
     'create_provincia',
     'get_provincia_by_nombre'
 ]
