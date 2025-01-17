@@ -41,6 +41,13 @@ const types = [];
                 options={types} 
             />
         </div>
+        <div class="flex gap-3 max-w-sm mx-auto justify-center items-center">
+            <input 
+                type="checkbox" 
+                id="filterMap" 
+            />
+            <label for="filterMap">Filtrar puntos en el mapa</label>
+        </div>
         <div class="flex gap-4 pt-2">
             <a class="flex-1 bg-gray-300 text-black rounded-lg hover:bg-gray-400 transition-colors items-center justify-center" href="/">
                 <button 
@@ -62,6 +69,8 @@ const types = [];
 </form>
 
 <script>
+    let allMonuments = [];
+    let filteredMonuments = [];
     async function loadTypes() {
         try {
             const response = await fetch('http://localhost:8080/types');
@@ -101,7 +110,7 @@ const types = [];
 
                 const response = await fetch(`http://localhost:8080/monuments?${queryParams}`);
                 const data = await response.json();
-                
+                filteredMonuments = data.monuments;
                 // Update results table
                 const resultsTable = document.getElementById('resultsTable');
                 if (resultsTable) {
@@ -119,15 +128,24 @@ const types = [];
                         </tr>
                     `).join('');
                 }
+            } catch (error) {
+                console.error('Error searching monuments:', error);
+            }
+        });
 
-                // Update map markers
-                window.monumentMap.map.eachLayer((layer: any) => {
-                    if (layer instanceof L.Marker) {
-                        layer.remove();
-                    }
-                });
 
-                data.monuments.forEach((monument: any) => {
+        const filterMapCheckbox = document.getElementById('filterMap') as HTMLInputElement;
+        filterMapCheckbox?.addEventListener('change', () => {
+            // Clear current markers
+            window.monumentMap.map.eachLayer((layer: any) => {
+                if (layer instanceof L.Marker) {
+                    layer.remove();
+                }
+            });
+
+            if (filterMapCheckbox.checked) {
+                // Show only filtered monuments
+                filteredMonuments.forEach((monument: any) => {
                     window.monumentMap.addMarker(
                         monument.latitud,
                         monument.longitud,
@@ -136,8 +154,22 @@ const types = [];
                         monument.tipo
                     );
                 });
-            } catch (error) {
-                console.error('Error searching monuments:', error);
+            } else {
+                // Show all monuments
+                fetch('http://localhost:8080/monuments')
+                    .then(response => response.json())
+                    .then(data => {
+                        data.monuments.forEach((monument: any) => {
+                            window.monumentMap.addMarker(
+                                monument.latitud,
+                                monument.longitud,
+                                monument.nombre,
+                                monument.descripcion,
+                                monument.tipo
+                            );
+                        });
+                    })
+                    .catch(error => console.error('Error loading all monuments:', error));
             }
         });
     });
