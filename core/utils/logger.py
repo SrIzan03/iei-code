@@ -82,3 +82,12 @@ class MyLogger:
             return stream.getvalue()
         else:
             raise ValueError(f"No existe un stream para el tipo '{log_type}'")
+        
+    @classmethod
+    def reset_logs(cls):
+        for stream in cls._streams.values():
+            stream.seek(0)
+            stream.truncate(0)
+        cls.repaired_counter = 0
+        cls.excluded_counter = 0
+        cls.succeded_counter = 0

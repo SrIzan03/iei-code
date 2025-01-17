@@ -8,5 +8,3 @@ def removeLogs():
     for file in os.listdir(logger_directory):
         if file.endswith(".log"):
             os.remove(os.path.join(logger_directory, file))
-
-removeLogs()

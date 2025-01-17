@@ -1,5 +1,4 @@
 import database as database
-import utils.remove_logs
 from extractors import extract_cv, extract_cle, extract_eus
 from dotenv import load_dotenv
 from database import create_database, clean_database
@@ -81,6 +80,7 @@ async def get_logs():
         repaired_content = logger.get_logs('repaired')
         excluded_content = logger.get_logs('excluded')
         result = "Número de registros cargados correctamente: " + str(succeded) + "\n\n" + "Registros con errores y reparados:\n" + repaired_content + "\n\n" + "Registros con errores y rechazados: \n" + excluded_content
+        logger.reset_logs()
         return JSONResponse(content=result)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error interno: {e}")
