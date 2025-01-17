@@ -115,7 +115,7 @@ const types = [];
                             <td class="py-2 px-4">${monument.provincia}</td>
                             <td class="py-2 px-4">${monument.longitud}</td>
                             <td class="py-2 px-4">${monument.latitud}</td>
-                            <td class="py-2 px-4 block h-[100px] overflow-y-auto">${monument.descripcion || '-'}</td>
+                            <td class="py-2 px-4 block h-[100px] overflow-y-scroll">${monument.descripcion || '-'}</td>
                         </tr>
                     `).join('');
                 }
