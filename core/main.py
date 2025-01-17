@@ -113,3 +113,5 @@ async def get_monuments(
 async def get_types():
     types = [tipo.value for tipo in Tipo]
     return JSONResponse(content={"types": types})
+
+database_init()
