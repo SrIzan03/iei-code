@@ -73,7 +73,7 @@ const types = [];
     let filteredMonuments = [];
     async function loadTypes() {
         try {
-            const response = await fetch('http://localhost:8080/types');
+            const response = await fetch('http://localhost:8080/monuments/types');
             const data = await response.json();
             const selectElement = document.getElementById('tipos');
             if (selectElement) {

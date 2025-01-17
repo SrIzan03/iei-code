@@ -34,7 +34,7 @@ function setLoading() {
 async function loadMonuments() {
     setLoading()
 
-    const loadUrl = url + "/load";
+    const loadUrl = url + "/data";
 
     const loadEus = loadUrl + "/" + eus
     const loadCv = loadUrl + "/" + cv
@@ -62,7 +62,9 @@ async function loadMonuments() {
             return;
         }
 
-        const response = await fetch(loader)
+        const response = await fetch(loader, {
+            method: 'POST'
+        });
         if (response.ok) {
             console.log(response.json())
         }
@@ -83,7 +85,9 @@ async function loadMonuments() {
 async function deleteMonuments() {
     setLoading()
     
-    const deleteResponse = await fetch(url + "/database/init")
+    const deleteResponse = await fetch(url + "/database/reset", {
+        method: 'POST'
+    });
     if (deleteResponse.ok) {
         const resultContainer = document.getElementById(loadResult)
         if (resultContainer == null) {
